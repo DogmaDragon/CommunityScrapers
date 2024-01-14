@@ -1,0 +1,46 @@
+name: "SissyHypno"
+sceneByName:
+  action: scrapeXPath
+  queryURL: https://sissyhypno.com/search/videos/{}/
+  scraper: sceneSearch
+sceneByQueryFragment:
+  action: scrapeXPath
+  queryURL: "{url}"
+  scraper: sceneScraper
+sceneByURL:
+  - action: scrapeXPath
+    url:
+      - sissyhypno.com
+    scraper: sceneScraper
+xPathScrapers:
+  sceneScraper:
+    common:
+      $studio: //a[starts-with(@href,'https://sissyhypno.com/user/')]
+    scene:
+      Title: //div[@class='item-tr-inner-col inner-col']/h1/text()
+      Details: //meta[@name='description']/@content
+      Code: 
+        selector: //link[@rel='canonical']/@href
+        postProcess:
+          - replace:
+            - regex: .+\-(\d+).+
+              with: $1
+      Image: //meta[@property='og:image']/@content
+      Studio:
+        Name: $studio/@title
+        URL: $studio/@href
+      Date:
+        selector: //div[@class='stats-container']/ul/li[3]/span[@class='sub-label']/text()
+        postProcess:
+          - replace:
+            - regex: \s\d{2}:\d{2}:\d{2}
+              with: ""
+      Tags:
+        Name: //div[@class='tags-block']/a/text()
+      URL: //link[@rel='canonical']/@href
+  sceneSearch:
+    scene:
+      Title: //div[@class='row']/div[@class='item-col col ']/div[@class='item-inner-col inner-col']/a/span[@class='item-info']/span[@class='title'] | //div[@class='row']/div[@class='item-col col']/div[@class='item-inner-col inner-col']/a/span[@class='item-info']/span[@class='title']
+      Details: //div[@class='row']/div[@class='item-col col ']/div[@class='item-inner-col inner-col']/a/span[@class='image']/span[@class='time'] | //div[@class='row']/div[@class='item-col col']/div[@class='item-inner-col inner-col']/a/span[@class='image']/span[@class='time']
+      URL: //a[starts-with(@href,'https://sissyhypno.com/video/')]/@href
+# Last Updated December 09, 2022 
